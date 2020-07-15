@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "./services/api";
 import "./App.css";
 import Axios from "axios";
+import logo from "./assets/icons/GitHub-Mark-Light-32px.png"
 
 const client_id = "4c760cd460ed0870f7b8";
 
@@ -65,12 +66,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>{reposData && reposData.name}</p>
-        <p>Login with GitHub</p>
-        <button type="button" onClick={handleLogin}>
-          Click here to login
+        <button className="App-button" type="button" onClick={handleLogin}>
+          <img src={logo}/>
+          <p>Login with GitHub</p>
         </button>
         <>
+        <p>{reposData && reposData.name}</p>
         {reposData && "List of Repos:"}
           <ul>
             {reposData && reposData.repositories.map( (repo) => 
