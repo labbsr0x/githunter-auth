@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import api from './services/api';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import api from "./services/api";
+import "./App.css";
+import Axios from "axios";
 
-const client_id = '4c760cd460ed0870f7b8';
-const client_secret = 'e4d5260837168214ca812e30c58f42fb5427da8c'
+const client_id = "4c760cd460ed0870f7b8";
 
 const getUrlParam = (parameter, defaultvalue) => {
   let urlparameter = defaultvalue;
@@ -18,39 +18,67 @@ const getUrlParam = (parameter, defaultvalue) => {
 };
 
 function App() {
+  const [accessToken, setAccessToken] = useState();
+
+  const [reposData, setReposData] = useState();
+
   async function handleLogin() {
-    window.location.href = `https://github.com/login/oauth/authorize/?scope=user:email&client_id=${client_id}`;
+    window.location.href = `https://github.com/login/oauth/authorize/?scope=user:email:repos&client_id=${client_id}`;
   }
 
   useEffect(() => {
-    const session_code = getUrlParam('code', '');
+    const session_code = getUrlParam("code", "");
 
-    if (session_code && session_code !== '') {
-      api.post('/login/oauth/access_token', {
-        client_id,
-        client_secret,
-        code: session_code
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, PUT",
-          "Access-Control-Allow-Headers": "append,delete,entries,foreach,get,has,keys,set,values,Authorization"
+    if (session_code && session_code !== "") {
+      Axios.get(
+        "/auth",
+        {
+          params: {
+            code: session_code,
+          },
         },
-      }).then((res) => {
-        console.log(res)
-      })
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, PUT",
+            "Access-Control-Allow-Headers":
+              "append,delete,entries,foreach,get,has,keys,set,values,Authorization",
+          },
+        }
+      ).then((res) => {
+        if (res && res.data && res.data.success) {
+          setAccessToken(res.data.token);
+        }
+      });
     }
-
   }, []);
+
+  useEffect(() => {
+    if (accessToken && accessToken !== "") {
+      api.get(`/v1/repos/${accessToken}`).then((res) => {
+        setReposData(res.data); // check when fail
+      });
+    }
+  }, [accessToken]);
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Login with GitHub
-        </p>
-        <button type="button" onClick={handleLogin}>Click here to login</button>
+        <p>{reposData && reposData.name}</p>
+        <p>Login with GitHub</p>
+        <button type="button" onClick={handleLogin}>
+          Click here to login
+        </button>
+        <>
+        {reposData && "List of Repos:"}
+          <ul>
+            {reposData && reposData.repositories.map( (repo) => 
+                <li key={repo}>{repo}</li>
+            )}
+          </ul>
+        </>
+        
       </header>
     </div>
   );
