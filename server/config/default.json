@@ -1,0 +1,26 @@
+{
+  "server": {
+    "url": "localhost",
+    "port": 5000,
+    "baseDir": "/",
+    "databasePath": ""
+  },
+  "github": {
+     "url": "https://github.com",
+     "endpoints": {
+      "auth": "/login/oauth/access_token"
+     },
+    "clientID": "4c760cd460ed0870f7b8",
+    "clientSecret": "e4d5260837168214ca812e30c58f42fb5427da8c"
+  },
+  "gitlab": {
+    "url": "https://gitlab.com",
+    "endpoints": {
+     "auth": "/oauth/token"
+    },
+   "clientID": "ec70cae19f6cd6d530d38ea9e4b09de7515b91219ad6be4729dc68ccec621c77",
+   "clientSecret": "cb1b5990d859064f503d0e6e121c67806bcc6064ed93260720bdcf973ab19b89",
+   "grantType": "authorization_code",
+   "redirect": "http://localhost:3000"
+ }
+}
